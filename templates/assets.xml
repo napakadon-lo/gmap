@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <template id="ac_ktis_qc_report_backend" inherit_id="web.assets_backend" active="True">
+        <xpath expr="." position="inside">
+            <script type="text/javascript" src="/ac_ktis_qc/static/src/js/equipment_qc.js"></script>
+            <script type="text/javascript" src="/ac_ktis_qc/static/src/js/input_output_qc.js"></script>
+            <script type="text/javascript" src="/ac_ktis_qc/static/src/js/qc_template.js"></script>
+            <script type="text/javascript" src="/ac_ktis_qc/static/src/js/template_workorder.js"></script>
+            <link rel="stylesheet" href="/ac_ktis_qc/static/src/css/qc_ktis_qc.css"/>
+        </xpath>
+    </template>
+</odoo>

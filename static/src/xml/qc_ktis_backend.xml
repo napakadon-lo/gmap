@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<templates>
+    <t t-name="ac_ktis_qc.buttons">
+        <button type="button" class="btn btn-primary btn-sm">Save</button>
+    </t>
+
+</templates>
+

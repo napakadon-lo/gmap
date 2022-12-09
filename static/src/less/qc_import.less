@@ -1,0 +1,75 @@
+.oe_import {
+    .o-webclient-padding(@top: 8px);
+    background-color: white;
+    overflow: auto;
+    position: absolute; // Needed for chrome
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    @media (max-width: @screen-xs-max) {
+        position: static;
+    }
+
+    > p {
+        text-align: justify
+    }
+    h2 {
+        margin-top: 0;
+        font-size: large; // override h2 font-size which is too large
+    }
+
+    .oe_import_box {
+        padding: 16px;
+        background: #F0EEEE;
+        border-radius: @border-radius-base;
+        border: solid 1px #dddddd;
+        label {
+            font-weight: normal;
+        }
+        .oe_import_file {
+            display: inline-block;
+        }
+    }
+
+    .oe_import_box1 {
+        padding: 16px;
+        background: #FFFFFF;
+        border-radius: @border-radius-base;
+        border: solid 1px #dddddd;
+        label {
+            font-weight: normal;
+        }
+        .oe_import_file {
+            display: inline-block;
+        }
+    }
+    .oe_input_data{
+          display: -webkit-box;
+          padding:1px;
+          margin:auto;
+          position: relative;
+          height: 45px;
+          width:100px;
+          margin-left: 8px;
+        label {
+              width: 80px;
+              padding: 4px;
+              margin-left: 4px;
+              margin-right: 4px;
+            }
+        select {
+              background-color: white;
+              border: 1px solid #aaa;
+              border-radius: 4px;
+              box-sizing: border-box;
+              display: block;
+              width: 250px;
+              z-index: 1051;
+              padding: 5px;
+              height: 30px;
+        }
+    }
+
+}
+

@@ -1,0 +1,549 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- ###################################################################################################### -->
+    <template id="equipment_qc">
+         <div class="o_form_view">
+            <div class="page o_form_sheet_bg">
+                <div class="o_form_sheet" id='1234'>
+                    <div class="row">
+                        <h1><strong style="padding-left:10px;"> Equipment / Machine</strong></h1>
+                        <h4 style="padding-left:10px;"><strong>Date : <span t-esc="date"/></strong></h4>
+                        <h4 style="padding-left:10px;"><strong>On Workcenter : <span t-esc="workcenter_id"/></strong></h4>
+                        <div class="panel panel-default">
+                            <h3><strong style="padding-left:10px;">Equipment</strong></h3>
+                            <div class="panel-body">
+                                <div class="form-check form-check-inline">
+                                    <t t-foreach="header" t-as="head">
+                                        <span style="padding-left:10px; padding-right:10px;">
+                                            <t t-if="head['id'] == eq_selected">
+                                                <div class="col-xs-4 col-md-4">
+                                                    <input class="equipment_check" type="radio" t-att-data-id="head['id']" t-attf-checked="checked"></input>
+                                                    <label class="form-check-label" for="inlineCheckbox1"><h3><b class="select-title"><t t-esc="head['name']"/></b></h3></label>
+                                                </div>
+                                            </t>
+                                            <t t-else="">
+                                                <div class="col-xs-4 col-md-4">
+                                                    <input class="equipment_check" type="radio" t-att-data-id="head['id']"></input>
+                                                    <label class="form-check-label" for="inlineCheckbox1"><h3><b class="select-title"><t t-esc="head['name']"/></b></h3></label>
+                                                </div>
+                                            </t>
+                                        </span>
+                                    </t>
+                                </div>
+                            </div>
+                            <div class="panel panel-default">
+                                <h3><strong style="padding-left:10px;">Templates</strong></h3>
+                                <div class="panel-body">
+                                    <div class="form-check form-check-inline">
+                                        <t t-foreach="template" t-as="tmp">
+                                            <t t-if="tmp['id'] == tmp_selected">
+                                                <div class="col-xs-4 col-md-4">
+                                                    <input class="template_check" type="radio" t-att-data-id="tmp['id']" t-attf-checked="checked"/>
+                                                    <label class="form-check-label"><h4><b class="select-title"><t t-esc="tmp['name']"/></b></h4></label>
+                                                </div>
+                                            </t>
+                                            <t t-else="">
+                                                <div class="col-xs-4 col-md-4">
+                                                    <input class="template_check" type="radio" t-att-data-id="tmp['id']"/>
+                                                    <label class="form-check-label"><h4><b class="select-title"><t t-esc="tmp['name']"/></b></h4></label>
+                                                </div>
+                                            </t>
+                                        </t>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <table class="table table-condensed">
+                        <!--
+                        <thead>
+                            <th style="border:None"></th>
+                                <t t-foreach="template" t-as="tmp">
+                                    <th t-attf-colspan="{{eq_line['cols']}}" t-attf-style="text-align:center">
+                                        <h4></h4>
+                                    </th>
+                                </t>
+                        </thead>
+                        -->
+                        <tr>
+                            <td style="border:None"></td>
+                            <t t-foreach="tmp_line" t-as="tmp">
+                                <td t-attf-style="text-align:center" class="active">
+                                   <t t-att-data-id="tmp['id']" t-esc="tmp['name']"/>
+                                </td>
+                            </t>
+                        <!--<td t-attf-style="text-align:center" class="active">Remark</td>-->
+                        </tr>
+                        <t t-foreach="lines" t-as="line">
+                            <tr>
+                                <td>
+                                    <t t-esc="line['hour']"/>
+                                </td>
+                                <t t-foreach="line['qc_lines']" t-as="qc_line">
+                                    <td>
+                                        <t t-if="qc_line['has_value']">
+                                            <t t-if="qc_line['template_type'] == 'text'">
+                                                <!--<span>H Text </span>-->
+                                                <input type="text"
+                                                        t-att-data-equiptment_id="qc_line['equipment_id']"
+                                                        t-att-data-qc_line_id="qc_line['qc_line_id']"
+                                                        t-att-data-time="line['hour']"
+                                                        t-att-value="qc_line['value']"
+                                                        t-att-data-product="qc_line['product_id']"
+                                                        t-att-data-location="qc_line['location_id']"
+                                                        t-att-data-qc_type="qc_line['qc_type']"
+                                                        t-att-data-qc_line_type="qc_line['qc_line_type']"
+                                                        t-att-data-template_type="qc_line['template_type']"
+                                                        t-att-data-sequence="qc_line['sequence']"
+                                                        class="text-right eq-input" />
+                                            </t>
+                                            <t t-if="qc_line['template_type'] == 'number'">
+                                                <!--<span>H number </span>-->
+                                                <input type="number"
+                                                        t-att-data-equiptment_id="qc_line['equipment_id']"
+                                                        t-att-data-qc_line_id="qc_line['qc_line_id']"
+                                                        t-att-data-time="line['hour']"
+                                                        t-att-value="qc_line['value']"
+                                                        t-att-data-product="qc_line['product_id']"
+                                                        t-att-data-location="qc_line['location_id']"
+                                                        t-att-data-qc_type="qc_line['qc_type']"
+                                                        t-att-data-qc_line_type="qc_line['qc_line_type']"
+                                                        t-att-data-template_type="qc_line['template_type']"
+                                                        t-att-data-sequence="qc_line['sequence']"
+                                                        class="text-right eq-input" />
+                                            </t>
+                                            <t t-if="qc_line['template_type'] == 'checkbox'">
+                                                <!--<span>H Checkbox </span>-->
+                                                <center>
+                                                    <t t-if="qc_line.get('value') == 'Pass'">
+                                                        <input type="checkbox" t-attf-checked="checked"
+                                                            t-att-data-equiptment_id="qc_line['equipment_id']"
+                                                            t-att-data-qc_line_id="qc_line['qc_line_id']"
+                                                            t-att-data-time="line['hour']"
+                                                            t-att-value="qc_line['value']"
+                                                            t-att-data-product="qc_line['product_id']"
+                                                            t-att-data-location="qc_line['location_id']"
+                                                            t-att-data-qc_type="qc_line['qc_type']"
+                                                            t-att-data-qc_line_type="qc_line['qc_line_type']"
+                                                            t-att-data-template_type="qc_line['template_type']"
+                                                            t-att-data-sequence="qc_line['sequence']"
+                                                            class="text-right eq-input"
+                                                            value="Pass"/>
+                                                    </t>
+                                                    <t t-else="">
+                                                        <input type="checkbox"
+                                                            t-att-data-equiptment_id="qc_line['equipment_id']"
+                                                            t-att-data-qc_line_id="qc_line['qc_line_id']"
+                                                            t-att-data-time="line['hour']"
+                                                            t-att-value="qc_line['value']"
+                                                            t-att-data-product="qc_line['product_id']"
+                                                            t-att-data-location="qc_line['location_id']"
+                                                            t-att-data-qc_type="qc_line['qc_type']"
+                                                            t-att-data-qc_line_type="qc_line['qc_line_type']"
+                                                            t-att-data-template_type="qc_line['template_type']"
+                                                            t-att-data-sequence="qc_line['sequence']"
+                                                            class="text-right eq-input"
+                                                            value="Failed"/>
+                                                    </t>
+                                                </center>
+                                            </t>
+                                            <t t-if="qc_line['template_type'] == 'passfail'">
+                                                <!--<span>H Passfail </span>-->
+                                                <center>
+                                                    <t t-if="qc_line.get('check') == True">
+                                                        <input type="checkbox" t-attf-checked="checked"
+                                                            t-att-data-equiptment_id="qc_line['equipment_id']"
+                                                            t-att-data-qc_line_id="qc_line['qc_line_id']"
+                                                            t-att-data-time="line['hour']"
+                                                            t-att-value="qc_line['value']"
+                                                            t-att-data-check="qc_line['check']"
+                                                            t-att-data-text="qc_line['text']"
+                                                            t-att-data-product="qc_line['product_id']"
+                                                            t-att-data-location="qc_line['location_id']"
+                                                            t-att-data-qc_type="qc_line['qc_type']"
+                                                            t-att-data-qc_line_type="qc_line['qc_line_type']"
+                                                            t-att-data-template_type="qc_line['template_type']"
+                                                            t-att-data-sequence="qc_line['sequence']"
+                                                            class="text-right eq-input"
+                                                            value="Pass"/>
+                                                    </t>
+                                                    <t t-else="">
+                                                        <input type="checkbox"
+                                                            t-att-data-equiptment_id="qc_line['equipment_id']"
+                                                            t-att-data-qc_line_id="qc_line['qc_line_id']"
+                                                            t-att-data-time="line['hour']"
+                                                            t-att-value="qc_line['value']"
+                                                            t-att-data-check="qc_line['check']"
+                                                            t-att-data-text="qc_line['text']"
+                                                            t-att-data-product="qc_line['product_id']"
+                                                            t-att-data-location="qc_line['location_id']"
+                                                            t-att-data-qc_type="qc_line['qc_type']"
+                                                            t-att-data-qc_line_type="qc_line['qc_line_type']"
+                                                            t-att-data-template_type="qc_line['template_type']"
+                                                            t-att-data-sequence="qc_line['sequence']"
+                                                            class="text-right eq-input"
+                                                            value="Failed"/>
+                                                    </t>
+                                                </center>
+                                                <input type="text"
+                                                        t-att-data-equiptment_id="qc_line['equipment_id']"
+                                                        t-att-data-qc_line_id="qc_line['qc_line_id']"
+                                                        t-att-data-time="line['hour']"
+                                                        t-att-data-product="qc_line['product_id']"
+                                                        t-att-data-location="qc_line['location_id']"
+                                                        t-att-data-qc_type="qc_line['qc_type']"
+                                                        t-att-data-qc_line_type="qc_line['qc_line_type']"
+                                                        t-att-data-template_type="qc_line['template_type']"
+                                                        t-att-value="qc_line['value']"
+                                                        t-att-data-check="qc_line['check']"
+                                                        t-att-data-text="qc_line['text']"
+                                                        t-att-data-sequence="qc_line['sequence']"
+                                                        class="text-right eq-input" 
+                                                        value="qc_line['text']"/>
+                                                      <!--<span t-esc="qc_line['value']"/>-->
+                                            </t>
+                                            <t t-if="qc_line['template_type'] == 'product'">
+                                                <!--<span>H product </span>-->
+                                                <input type="number"
+                                                        t-att-data-equiptment_id="qc_line['equipment_id']"
+                                                        t-att-data-qc_line_id="qc_line['qc_line_id']"
+                                                        t-att-data-time="line['hour']"
+                                                        t-att-value="qc_line['value']"
+                                                        t-att-data-product="qc_line['product_id']"
+                                                        t-att-data-location="qc_line['location_id']"
+                                                        t-att-data-qc_type="qc_line['qc_type']"
+                                                        t-att-data-qc_line_type="qc_line['qc_line_type']"
+                                                        t-att-data-template_type="qc_line['template_type']"
+                                                        t-att-data-sequence="qc_line['sequence']"
+                                                        class="text-right eq-input" />
+                                            </t>
+                                            <t t-if="qc_line['template_type'] == 'products'">
+                                                <!--<span>H products </span>-->
+                                                <input type="text"
+                                                        t-att-data-equiptment_id="qc_line['equipment_id']"
+                                                        t-att-data-qc_line_id="qc_line['qc_line_id']"
+                                                        t-att-data-time="line['hour']"
+                                                        t-att-value="qc_line['value']"
+                                                        t-att-data-product="qc_line['product_id']"
+                                                        t-att-data-location="qc_line['location_id']"
+                                                        t-att-data-qc_type="qc_line['qc_type']"
+                                                        t-att-data-qc_line_type="qc_line['qc_line_type']"
+                                                        t-att-data-template_type="qc_line['template_type']"
+                                                        t-att-data-sequence="qc_line['sequence']"
+                                                        class="text-right eq-input" />
+                                            </t>
+                                            <t t-if="qc_line['template_type'] == 'relate'">
+                                                <!--<span>H relate </span>-->
+                                                <input type="number"
+                                                        t-att-data-equiptment_id="qc_line['equipment_id']"
+                                                        t-att-data-qc_line_id="qc_line['qc_line_id']"
+                                                        t-att-data-time="line['hour']"
+                                                        t-att-value="qc_line['value']"
+                                                        t-att-data-product="qc_line['product_id']"
+                                                        t-att-data-location="qc_line['location_id']"
+                                                        t-att-data-qc_type="qc_line['qc_type']"
+                                                        t-att-data-qc_line_type="qc_line['qc_line_type']"
+                                                        t-att-data-template_type="qc_line['template_type']"
+                                                        t-att-data-sequence="qc_line['sequence']"
+                                                        class="text-right eq-input" />
+                                            </t>
+                                            <t t-if="qc_line['template_type'] == 'employee'">
+                                                <!--<span>H employee </span>-->
+                                                <input type="text"
+                                                        t-att-data-equiptment_id="qc_line['equipment_id']"
+                                                        t-att-data-qc_line_id="qc_line['qc_line_id']"
+                                                        t-att-data-time="line['hour']"
+                                                        t-att-value="qc_line['value']"
+                                                        t-att-data-product="qc_line['product_id']"
+                                                        t-att-data-location="qc_line['location_id']"
+                                                        t-att-data-qc_type="qc_line['qc_type']"
+                                                        t-att-data-qc_line_type="qc_line['qc_line_type']"
+                                                        t-att-data-template_type="qc_line['template_type']"
+                                                        t-att-data-sequence="qc_line['sequence']"
+                                                        class="text-right eq-input" />
+                                            </t>
+                                            <t t-if="qc_line['template_type'] == 'lot'">
+                                                <!--<span>H Lot </span>-->
+                                                <input type="text"
+                                                        t-att-data-equiptment_id="qc_line['equipment_id']"
+                                                        t-att-data-qc_line_id="qc_line['qc_line_id']"
+                                                        t-att-data-time="line['hour']"
+                                                        t-att-value="qc_line['value']"
+                                                        t-att-data-product="qc_line['product_id']"
+                                                        t-att-data-location="qc_line['location_id']"
+                                                        t-att-data-qc_type="qc_line['qc_type']"
+                                                        t-att-data-qc_line_type="qc_line['qc_line_type']"
+                                                        t-att-data-template_type="qc_line['template_type']"
+                                                        t-att-data-sequence="qc_line['sequence']"
+                                                        class="text-right eq-input" />
+                                            </t>
+                                            <t t-if="qc_line['template_type'] == 'time'">
+                                                <!--<span>H Lot </span>-->
+                                                <input type="time"
+                                                        t-att-data-equiptment_id="qc_line['equipment_id']"
+                                                        t-att-data-qc_line_id="qc_line['qc_line_id']"
+                                                        t-att-data-time="line['hour']"
+                                                        t-att-value="qc_line['value']"
+                                                        t-att-data-product="qc_line['product_id']"
+                                                        t-att-data-location="qc_line['location_id']"
+                                                        t-att-data-qc_type="qc_line['qc_type']"
+                                                        t-att-data-qc_line_type="qc_line['qc_line_type']"
+                                                        t-att-data-template_type="qc_line['template_type']"
+                                                        t-att-data-sequence="qc_line['sequence']"
+                                                        class="text-right eq-input" />
+                                            </t>
+                                            <t t-if="qc_line['template_type'] == 'import'">
+                                                <!--<span>H Import </span>-->
+                                                <input type="text"
+                                                        t-att-data-equiptment_id="qc_line['equipment_id']"
+                                                        t-att-data-qc_line_id="qc_line['qc_line_id']"
+                                                        t-att-data-time="line['hour']"
+                                                        t-att-value="qc_line['value']"
+                                                        t-att-data-product="qc_line['product_id']"
+                                                        t-att-data-location="qc_line['location_id']"
+                                                        t-att-data-qc_type="qc_line['qc_type']"
+                                                        t-att-data-qc_line_type="qc_line['qc_line_type']"
+                                                        t-att-data-template_type="qc_line['template_type']"
+                                                        t-att-data-sequence="qc_line['sequence']"
+                                                        class="text-right eq-input" />
+                                            </t>
+                                        </t>
+                                        <t t-else="----------------------Has not value-----------------------">
+                                            <t t-if="qc_line['template_type'] == 'text'">
+                                                <!--<span>N Text </span>-->
+                                                <input type="text"
+                                                        t-att-data-equiptment_id="qc_line['equipment_id']"
+                                                        t-att-data-qc_line_id="qc_line['qc_line_id']"
+                                                        t-att-data-time="line['hour']"
+                                                        t-att-value="qc_line['value']"
+                                                        t-att-data-product="qc_line['product_id']"
+                                                        t-att-data-location="qc_line['location_id']"
+                                                        t-att-data-qc_type="qc_line['qc_type']"
+                                                        t-att-data-qc_line_type="qc_line['qc_line_type']"
+                                                        t-att-data-template_type="qc_line['template_type']"
+                                                        t-att-data-sequence="qc_line['sequence']"
+                                                        class="text-right eq-input" />
+                                            </t>
+                                            <t t-if="qc_line['template_type'] == 'number'">
+                                                <!--<span>N number </span>-->
+                                                    <input type="number"
+                                                            t-att-data-equiptment_id="qc_line['equipment_id']"
+                                                            t-att-data-qc_line_id="qc_line['qc_line_id']"
+                                                            t-att-data-time="line['hour']"
+                                                            t-att-value="qc_line['value']"
+                                                            t-att-data-product="qc_line['product_id']"
+                                                            t-att-data-location="qc_line['location_id']"
+                                                            t-att-data-qc_type="qc_line['qc_type']"
+                                                            t-att-data-qc_line_type="qc_line['qc_line_type']"
+                                                            t-att-data-template_type="qc_line['template_type']"
+                                                            t-att-data-sequence="qc_line['sequence']"
+                                                            class="text-right eq-input" />
+                                            </t>
+                                            <t t-if="qc_line['template_type'] == 'checkbox'">
+                                                <!--<span>N checkbox </span>-->
+                                                    <center>
+                                                        <t t-if="qc_line.get('value') == 'Pass'">
+                                                            <input type="checkbox" t-attf-checked="checked"
+                                                                t-att-data-equiptment_id="qc_line['equipment_id']"
+                                                                t-att-data-qc_line_id="qc_line['qc_line_id']"
+                                                                t-att-data-time="line['hour']"
+                                                                t-att-value="qc_line['value']"
+                                                                t-att-data-product="qc_line['product_id']"
+                                                                t-att-data-location="qc_line['location_id']"
+                                                                t-att-data-qc_type="qc_line['qc_type']"
+                                                                t-att-data-qc_line_type="qc_line['qc_line_type']"
+                                                                t-att-data-template_type="qc_line['template_type']"
+                                                                t-att-data-sequence="qc_line['sequence']"
+                                                                class="text-right eq-input"
+                                                                value="Pass"/>
+                                                        </t>
+                                                        <t t-else="">
+                                                            <input type="checkbox"
+                                                                t-att-data-equiptment_id="qc_line['equipment_id']"
+                                                                t-att-data-qc_line_id="qc_line['qc_line_id']"
+                                                                t-att-data-time="line['hour']"
+                                                                t-att-value="qc_line['value']"
+                                                                t-att-data-product="qc_line['product_id']"
+                                                                t-att-data-location="qc_line['location_id']"
+                                                                t-att-data-qc_type="qc_line['qc_type']"
+                                                                t-att-data-qc_line_type="qc_line['qc_line_type']"
+                                                                t-att-data-template_type="qc_line['template_type']"
+                                                                t-att-data-sequence="qc_line['sequence']"
+                                                                class="text-right eq-input"
+                                                                value="Failed"/>
+                                                        </t>
+                                                    </center>
+                                            </t>
+                                            <t t-if="qc_line['template_type'] == 'passfail'">
+                                                <!--<span>N Passfail </span>-->
+                                                <center>
+                                                    <t t-if="qc_line.get('check') == 'yes'">
+                                                        <input type="checkbox" t-att-checked="checked"
+                                                            t-att-data-equiptment_id="qc_line['equipment_id']"
+                                                            t-att-data-qc_line_id="qc_line['qc_line_id']"
+                                                            t-att-data-time="line['hour']"
+                                                            t-att-value="qc_line['value']"
+                                                            t-att-data-check="qc_line['check']"
+                                                            t-att-data-text="qc_line['text']"
+                                                            t-att-data-product="qc_line['product_id']"
+                                                            t-att-data-location="qc_line['location_id']"
+                                                            t-att-data-qc_type="qc_line['qc_type']"
+                                                            t-att-data-qc_line_type="qc_line['qc_line_type']"
+                                                            t-att-data-template_type="qc_line['template_type']"
+                                                            t-att-data-sequence="qc_line['sequence']"
+                                                            class="text-right eq-input"
+                                                            value="Pass"/>
+                                                    </t>
+                                                    <t t-else="">
+                                                        <input type="checkbox"
+                                                            t-att-data-equiptment_id="qc_line['equipment_id']"
+                                                            t-att-data-qc_line_id="qc_line['qc_line_id']"
+                                                            t-att-data-time="line['hour']"
+                                                            t-att-value="qc_line['value']"
+                                                            t-att-data-check="qc_line['check']"
+                                                            t-att-data-text="qc_line['text']"
+                                                            t-att-data-product="qc_line['product_id']"
+                                                            t-att-data-location="qc_line['location_id']"
+                                                            t-att-data-qc_type="qc_line['qc_type']"
+                                                            t-att-data-qc_line_type="qc_line['qc_line_type']"
+                                                            t-att-data-template_type="qc_line['template_type']"
+                                                            t-att-data-sequence="qc_line['sequence']"
+                                                            class="text-right eq-input"
+                                                            value="Failed"/>
+                                                    </t>
+                                                </center>
+                                                <input type="text"
+                                                        t-data-equiptment_id="qc_line['equipment_id']"
+                                                        t-att-data-qc_line_id="qc_line['qc_line_id']"
+                                                        t-att-data-time="line['hour']"
+                                                        t-att-data-product="qc_line['product_id']"
+                                                        t-att-data-location="qc_line['location_id']"
+                                                        t-att-data-qc_type="qc_line['qc_type']"
+                                                        t-att-data-qc_line_type="qc_line['qc_line_type']"
+                                                        t-att-data-template_type="qc_line['template_type']"
+                                                        t-att-value="qc_line['value']"
+                                                        t-att-data-check="qc_line['check']"
+                                                        t-att-data-text="qc_line['text']"
+                                                        t-att-data-sequence="qc_line['sequence']"
+                                                        class="text-right eq-input" 
+                                                        value="qc_line['text']"/>
+                                                <span t-esc="qc_line['value']"/>
+
+                                            </t>
+                                            <t t-if="qc_line['template_type'] == 'product'">
+                                                <!--<span>N product </span>-->
+                                                    <input type="number"
+                                                            t-att-data-equiptment_id="qc_line['equipment_id']"
+                                                            t-att-data-qc_line_id="qc_line['qc_line_id']"
+                                                            t-att-data-time="line['hour']"
+                                                            t-att-value="qc_line['value']"
+                                                            t-att-data-product="qc_line['product_id']"
+                                                            t-att-data-location="qc_line['location_id']"
+                                                            t-att-data-qc_type="qc_line['qc_type']"
+                                                            t-att-data-qc_line_type="qc_line['qc_line_type']"
+                                                            t-att-data-template_type="qc_line['template_type']"
+                                                           t-att-data-sequence="qc_line['sequence']"
+                                                            class="text-right eq-input" />
+                                            </t>
+                                            <t t-if="qc_line['template_type'] == 'products'">
+                                                <!--<span>N products </span>-->
+                                                    <input type="text"
+                                                            t-att-data-equiptment_id="qc_line['equipment_id']"
+                                                            t-att-data-qc_line_id="qc_line['qc_line_id']"
+                                                            t-att-data-time="line['hour']"
+                                                            t-att-value="qc_line['value']"
+                                                            t-att-data-product="qc_line['product_id']"
+                                                            t-att-data-location="qc_line['location_id']"
+                                                            t-att-data-qc_type="qc_line['qc_type']"
+                                                            t-att-data-qc_line_type="qc_line['qc_line_type']"
+                                                            t-att-data-template_type="qc_line['template_type']"
+                                                           t-att-data-sequence="qc_line['sequence']"
+                                                            class="text-right eq-input" />
+                                            </t>
+                                            <t t-if="qc_line['template_type'] == 'relate'">
+                                                <!--<span>N relate </span>-->
+                                                    <input type="number"
+                                                            t-att-data-equiptment_id="qc_line['equipment_id']"
+                                                            t-att-data-qc_line_id="qc_line['qc_line_id']"
+                                                            t-att-data-time="line['hour']"
+                                                            t-att-value="qc_line['value']"
+                                                            t-att-data-product="qc_line['product_id']"
+                                                            t-att-data-location="qc_line['location_id']"
+                                                            t-att-data-qc_type="qc_line['qc_type']"
+                                                            t-att-data-qc_line_type="qc_line['qc_line_type']"
+                                                            t-att-data-template_type="qc_line['template_type']"
+                                                           t-att-data-sequence="qc_line['sequence']"
+                                                            class="text-right eq-input" />
+                                            </t>
+                                            <t t-if="qc_line['template_type'] == 'employee'">
+                                                <!--<span>N employee </span>-->
+                                                    <input type="text"
+                                                            t-att-data-equiptment_id="qc_line['equipment_id']"
+                                                            t-att-data-qc_line_id="qc_line['qc_line_id']"
+                                                            t-att-data-time="line['hour']"
+                                                            t-att-value="qc_line['value']"
+                                                            t-att-data-product="qc_line['product_id']"
+                                                            t-att-data-location="qc_line['location_id']"
+                                                            t-att-data-qc_type="qc_line['qc_type']"
+                                                            t-att-data-qc_line_type="qc_line['qc_line_type']"
+                                                            t-att-data-template_type="qc_line['template_type']"
+                                                           t-att-data-sequence="qc_line['sequence']"
+                                                            class="text-right eq-input" />
+                                            </t>
+                                            <t t-if="qc_line['template_type'] == 'lot'">
+                                                <!--<span>N Lot </span>-->
+                                                <input type="text"
+                                                        t-att-data-equiptment_id="qc_line['equipment_id']"
+                                                        t-att-data-qc_line_id="qc_line['qc_line_id']"
+                                                        t-att-data-time="line['hour']"
+                                                        t-att-value="qc_line['value']"
+                                                        t-att-data-product="qc_line['product_id']"
+                                                        t-att-data-location="qc_line['location_id']"
+                                                        t-att-data-qc_type="qc_line['qc_type']"
+                                                        t-att-data-qc_line_type="qc_line['qc_line_type']"
+                                                        t-att-data-template_type="qc_line['template_type']"
+                                                        t-att-data-sequence="qc_line['sequence']"
+                                                        class="text-right eq-input" />
+                                            </t>
+                                            <t t-if="qc_line['template_type'] == 'time'">
+                                                <!--<span>N Lot </span>-->
+                                                <input type="time"
+                                                        t-att-data-equiptment_id="qc_line['equipment_id']"
+                                                        t-att-data-qc_line_id="qc_line['qc_line_id']"
+                                                        t-att-data-time="line['hour']"
+                                                        t-att-value="qc_line['value']"
+                                                        t-att-data-product="qc_line['product_id']"
+                                                        t-att-data-location="qc_line['location_id']"
+                                                        t-att-data-qc_type="qc_line['qc_type']"
+                                                        t-att-data-qc_line_type="qc_line['qc_line_type']"
+                                                        t-att-data-template_type="qc_line['template_type']"
+                                                        t-att-data-sequence="qc_line['sequence']"
+                                                        class="text-right eq-input" />
+                                            </t>
+                                            <t t-if="qc_line['template_type'] == 'import'">
+                                                <span>N Import </span>
+                                                <input type="text"
+                                                        t-att-data-equiptment_id="qc_line['equipment_id']"
+                                                        t-att-data-qc_line_id="qc_line['qc_line_id']"
+                                                        t-att-data-time="line['hour']"
+                                                        t-att-value="qc_line['value']"
+                                                        t-att-data-product="qc_line['product_id']"
+                                                        t-att-data-location="qc_line['location_id']"
+                                                        t-att-data-qc_type="qc_line['qc_type']"
+                                                        t-att-data-qc_line_type="qc_line['qc_line_type']"
+                                                        t-att-data-template_type="qc_line['template_type']"
+                                                        t-att-data-sequence="qc_line['sequence']"
+                                                        class="text-right eq-input" />
+                                            </t>
+                                        </t>
+                                    </td>
+                                </t>
+                            </tr>
+                        </t>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </template>
+
+</odoo>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_gmap_root" 
+        web_icon="gmap,static/description/gear_icon.jpg"
+        sequence="1"
+        name="GMap"
+    />
+
+    <menuitem id="menu_gmap_document"
+        parent="menu_gmap_root"
+        action="action_gmap_document"
+        sequence="1"
+        name="Document"
+    />
+
+</odoo>

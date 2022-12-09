@@ -1,0 +1,795 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <template id="template_workorder">
+        <datalist id="lot_list"/>
+        <datalist id="prod_list"/>
+        <datalist id="emp_list"/>
+        <datalist id="location_list"/>
+        <div class="o_form_view">
+            <div class="page o_form_sheet_bg">
+                <div class="o_form_sheet">
+                    <div class="row">
+                        <h1><strong style="padding-left:10px;" t-esc="display_name"></strong></h1>
+                        <h4 style="padding-left:10px;"><strong>Date : <span t-esc="date"/></strong></h4>
+                        <h4 style="padding-left:10px;"><strong>On Workcenter : <span t-esc="workcenter_id.display_name"/></strong></h4>
+                        <h4 style="padding-left:10px;">
+                            <strong>Status : </strong>
+                            <t t-if="is_validate == True"><span>Is Validated</span></t>
+                            <t t-if="not is_validate"><span>Waiting for Validate</span></t>
+                        </h4>
+                        <!--CLOSE include iquipment in 1 template-->
+                        <!--<div class="panel panel-default" t-if="equipment_ids">-->
+                        <!--<h3><strong style="padding-left:10px;">Equipment</strong></h3>-->
+                        <!--<div class="panel-body">-->
+                        <!--<div class="form-check form-check-inline">-->
+                        <!--<t t-foreach="equipment_ids" t-as="equipment_id">-->
+                        <!--<t t-if="equipment_id == current_equipment_id">-->
+                        <!--<span style="padding-left:10px; padding-right:10px;" class="col-xs-4 col-md-6 col-sm-12">-->
+                        <!--<input class="check_equipment" type="radio" t-att-data-id="equipment_id.id" t-attf-checked="checked"></input>-->
+                        <!--<label class="form-check-label" for="inlineCheckbox1">-->
+                        <!--<h4><b class="select-title"><t t-esc="equipment_id.display_name"/></b></h4>-->
+                        <!--</label>-->
+                        <!--</span>-->
+                        <!--</t>-->
+                        <!--<t t-else="">-->
+                        <!--<span style="padding-left:10px; padding-right:10px;" class="col-xs-4 col-md-6 col-sm-12">-->
+                        <!--<input class="check_equipment" type="radio" t-att-data-id="equipment_id.id"></input>-->
+                        <!--<label class="form-check-label" for="inlineCheckbox1"><h4><t t-esc="equipment_id.display_name"/></h4></label>-->
+                        <!--</span>-->
+                        <!--</t>-->
+                        <!--</t>-->
+                        <!--</div>-->
+                        <!--</div>-->
+                        <!--</div>-->
+                        <div class="panel panel-default" t-if="template_ids">
+                            <h3>
+                                <div class="col-xs-1 col-md-1 col-sm-1" >
+                                    <strong style="padding-left:10px;">Templates</strong>
+                                </div>
+                                <div class="col-xs-6 col-md-6 col-sm-6" align="center">
+                                </div>
+                                <div class="col-xs-1 col-md-1 col-sm-1" align="right">
+                                    <strong style="padding-left:10px;">Status</strong>
+                                </div>
+                                <div class="col-xs-1 col-md-1 col-sm-1" align="center">
+                                    <t t-if="status_id.state == 'draft'">
+                                        <span style="color:red; font-size:15px;">Draft</span>
+                                    </t>
+                                    <t t-else="">
+                                        <span style="color:#B5B4B4; font-size:15px;">Draft</span>
+                                    </t>
+                                </div>
+                                <div class="col-xs-1 col-md-1 col-sm-1" align="center">
+                                    <t t-if="status_id.state == 'confirm'">
+                                        <span style="color:#043CAC; font-size:15px;">Approved1</span>
+                                    </t>
+                                    <t t-else="">
+                                        <span style="color:#B5B4B4; font-size:15px;">Approved1</span>
+                                    </t>
+                                </div>
+                                <div class="col-xs-1 col-md-1 col-sm-1" align="center">
+                                    <t t-if="status_id.state == 'approve'">
+                                        <span style="color:#043CAC; font-size:15px;">Approved2</span>
+                                    </t>
+                                    <t t-else="">
+                                        <span style="color:#B5B4B4; font-size:15px;">Approved2</span>
+                                    </t>
+                                </div>
+                                <div class="col-xs-1 col-md-1 col-sm-1" align="center">
+                                    <t t-if="status_id.state == 'done'">
+                                        <span style="color:#68E511; font-size:15px;">Validated</span>
+                                    </t>
+                                    <t t-else="status_id.state == 'done'">
+                                        <span style="color:#B5B4B4; font-size:15px;">Validated</span>
+                                    </t>
+                                </div>
+                            </h3>
+                            <div class="panel-body">
+                                <div class="form-check form-check-inline">
+                                    <t t-foreach="template_ids" t-as="template_id">
+                                        <t t-set="template_name" t-value="'[ ' + template_id.name + ' ] ' + template_id.title"/>
+                                        <t t-if="template_id == current_template_id">
+                                            <span style="padding-left:10px; padding-right:10px;" class="col-xs-4 col-md-6 col-sm-12">
+                                                <input class="check_template" type="radio" t-att-data-id="template_id.id" t-attf-checked="checked"></input>
+                                                <label class="form-check-label" for="inlineCheckbox1">
+                                                    <h4><b class="select-title"><t t-esc="template_name"/></b></h4>
+                                                </label>
+                                            </span>
+                                        </t>
+                                        <t t-else="">
+                                            <span style="padding-left:10px; padding-right:10px;" class="col-xs-4 col-md-6 col-sm-12">
+                                                <input class="check_template" type="radio" t-att-data-id="template_id.id"></input>
+                                                <label class="form-check-label" for="inlineCheckbox1"><h4><t t-esc="template_name"/></h4></label>
+                                            </span>
+                                        </t>
+                                    </t>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <table class="table table-condensed" name="table-template">
+                        <tr>
+                            <t t-if="equipment_ids">
+                                <td style="border:None"></td>
+                                <td style="border:None; width:200px;"></td>
+                            </t>
+                            <t t-else="">
+                                <td style="border:None"></td>
+                            </t>
+                            <t t-if="current_template_id" t-foreach="[o for o in current_template_id.lines if o.is_active and o.template_type != 'footer_text']" t-as="line">
+                                <td t-attf-style="text-align:center" class="active">
+                                   <t t-att-data-id="line.id" t-esc="line.name"/>
+                                </td>
+                            </t>
+                        </tr>
+                        <t t-foreach="lines" t-as="line">
+                            <t t-set="sequence" t-value="0"/>
+                            <tr>
+                                <td>
+                                    <t t-esc="line['time']"/>
+                                </td>
+                                <t t-if="equipment_ids">
+                                    <td style="width:200px">
+                                        <t t-esc="line['equipment_name']" />
+                                    </td>
+                                </t>
+                                <t t-foreach="line['qc_lines']" t-as="qc_line">
+                                    <td>
+                                        <t t-if="qc_line['template_type'] == 'text'">
+                                            <input type="text" id="input_text_lock"
+                                                t-attf-id="{{line['time']}}|{{line['sequence']}}|{{qc_line['qc_line_id']}}"
+                                                t-att-data-time="line['time']"
+                                                t-att-data-sequence="line['sequence']"
+                                                t-att-value="qc_line['value']"
+                                                t-att-data-qc_line_id="qc_line['qc_line_id']"
+                                                t-att-data-workorder="qc_line['workorder_id']"
+                                                t-att-data-template="qc_line['template_id']"
+                                                t-att-data-equipment="qc_line['equipment_id']"
+                                                t-att-data-product="qc_line['product_id']"
+                                                t-att-data-location="qc_line['location_id']"
+                                                t-att-data-qc_type="qc_line['qc_type']"
+                                                t-att-data-qc_line_type="qc_line['qc_line_type']"
+                                                t-att-data-template_type="qc_line['template_type']"
+                                                t-att-data-is_change="line.get('is_change',False)"
+                                                t-att-data-is_create="qc_line['is_create']"
+                                                class="text text-left change_value click_input"/>
+                                            <t t-if="line.get('is_change',False)"><span>&#10004;</span></t>
+                                        </t>
+                                        <t t-if="qc_line['template_type'] == 'number'">
+                                            <input type="number" id="input_number_lock"
+                                                t-attf-id="{{line['time']}}|{{line['sequence']}}|{{qc_line['qc_line_id']}}"
+                                                t-att-data-time="line['time']"
+                                                t-att-data-sequence="line['sequence']"
+                                                t-att-value="qc_line['value']"
+                                                t-att-data-qc_line_id="qc_line['qc_line_id']"
+                                                t-att-data-workorder="qc_line['workorder_id']"
+                                                t-att-data-template="qc_line['template_id']"
+                                                t-att-data-equipment="qc_line['equipment_id']"
+                                                t-att-data-product="qc_line['product_id']"
+                                                t-att-data-location="qc_line['location_id']"
+                                                t-att-data-qc_type="qc_line['qc_type']"
+                                                t-att-data-qc_line_type="qc_line['qc_line_type']"
+                                                t-att-data-template_type="qc_line['template_type']"
+                                                t-att-data-is_change="line.get('is_change',false)"
+                                                t-att-data-is_create="qc_line['is_create']"
+                                                class="number text-right change_value click_input"/>
+                                            <t t-if="line.get('is_change',false)"><span>&#10004;</span></t>
+                                        </t>
+                                        <t t-if="qc_line['template_type'] == 'product'">
+                                            <input type="number" id="input_product_lock"
+                                                t-attf-id="{{line['time']}}|{{line['sequence']}}|{{qc_line['qc_line_id']}}"
+                                                t-att-data-time="line['time']"
+                                                t-att-data-sequence="line['sequence']"
+                                                t-att-value="qc_line['value']"
+                                                t-att-data-qc_line_id="qc_line['qc_line_id']"
+                                                t-att-data-workorder="qc_line['workorder_id']"
+                                                t-att-data-template="qc_line['template_id']"
+                                                t-att-data-equipment="qc_line['equipment_id']"
+                                                t-att-data-product="qc_line['product_id']"
+                                                t-att-data-location="qc_line['location_id']"
+                                                t-att-data-qc_type="qc_line['qc_type']"
+                                                t-att-data-qc_line_type="qc_line['qc_line_type']"
+                                                t-att-data-template_type="qc_line['template_type']"
+                                                t-att-data-is_change="'False'"
+                                                t-att-data-is_create="qc_line['is_create']"
+                                                class="number text-right change_value click_input"/>
+                                            <t t-if="line.get('is_change',False)"><span>&#10004;</span></t>
+                                        </t>
+                                        <t t-if="qc_line['template_type'] == 'products'">
+                                            <input type="text" id="input_products_lock" list="prod_list" autocomplete="off"
+                                                t-attf-id="{{line['time']}}|{{line['sequence']}}|{{qc_line['qc_line_id']}}"
+                                                t-att-data-time="line['time']"
+                                                t-att-data-sequence="line['sequence']"
+                                                t-att-value="qc_line['value']"
+                                                t-att-data-qc_line_id="qc_line['qc_line_id']"
+                                                t-att-data-workorder="qc_line['workorder_id']"
+                                                t-att-data-template="qc_line['template_id']"
+                                                t-att-data-equipment="qc_line['equipment_id']"
+                                                t-att-data-product="qc_line['product_id']"
+                                                t-att-data-location="qc_line['location_id']"
+                                                t-att-data-qc_type="qc_line['qc_type']"
+                                                t-att-data-qc_line_type="qc_line['qc_line_type']"
+                                                t-att-data-template_type="qc_line['template_type']"
+                                                t-att-data-is_change="line.get('is_change',False)"
+                                                t-att-data-is_create="qc_line['is_create']"
+                                                class="text text-left change_value click_input clickcomplete"/>
+                                            <t t-if="line.get('is_change',False)"><span>&#10004;</span></t>
+                                        </t>
+                                        <t t-if="qc_line['template_type'] == 'relate'">
+                                            <input type="number" id="input_relate_lock"
+                                                t-attf-id="{{line['time']}}|{{line['sequence']}}|{{qc_line['qc_line_id']}}"
+                                                t-att-data-time="line['time']"
+                                                t-att-data-sequence="line['sequence']"
+                                                t-att-value="qc_line['value']"
+                                                t-att-data-qc_line_id="qc_line['qc_line_id']"
+                                                t-att-data-workorder="qc_line['workorder_id']"
+                                                t-att-data-template="qc_line['template_id']"
+                                                t-att-data-equipment="qc_line['equipment_id']"
+                                                t-att-data-product="qc_line['product_id']"
+                                                t-att-data-location="qc_line['location_id']"
+                                                t-att-data-qc_type="qc_line['qc_type']"
+                                                t-att-data-qc_line_type="qc_line['qc_line_type']"
+                                                t-att-data-template_type="qc_line['template_type']"
+                                                t-att-data-is_change="line.get('is_change',False)"
+                                                t-att-data-is_create="qc_line['is_create']"
+                                                class="number text-right change_value click_input"/>
+                                            <t t-if="line.get('is_change',False)"><span>&#10004;</span></t>
+                                        </t>
+                                        <t t-if="qc_line['template_type'] == 'employee'">
+                                            <input type="text" id="input_employee_lock" list="emp_list" autocomplete="off"
+                                                t-attf-id="{{line['time']}}|{{line['sequence']}}|{{qc_line['qc_line_id']}}"
+                                                t-att-data-time="line['time']"
+                                                t-att-data-sequence="line['sequence']"
+                                                t-att-value="qc_line['value']"
+                                                t-att-data-qc_line_id="qc_line['qc_line_id']"
+                                                t-att-data-workorder="qc_line['workorder_id']"
+                                                t-att-data-template="qc_line['template_id']"
+                                                t-att-data-equipment="qc_line['equipment_id']"
+                                                t-att-data-product="qc_line['product_id']"
+                                                t-att-data-location="qc_line['location_id']"
+                                                t-att-data-qc_type="qc_line['qc_type']"
+                                                t-att-data-qc_line_type="qc_line['qc_line_type']"
+                                                t-att-data-template_type="qc_line['template_type']"
+                                                t-att-data-is_change="line.get('is_change',False)"
+                                                t-att-data-is_create="qc_line['is_create']"
+                                                class="text text-left change_value click_input clickcomplete"/>
+                                            <t t-if="line.get('is_change',False)"><span>&#10004;</span></t>
+                                        </t>
+                                        <t t-if="qc_line['template_type'] == 'lot'">
+                                            <input type="text" id="input_lot_lock" list="lot_list" autocomplete="off"
+                                                t-attf-id="{{line['time']}}|{{line['sequence']}}|{{qc_line['qc_line_id']}}"
+                                                t-att-data-time="line['time']"
+                                                t-att-data-sequence="line['sequence']"
+                                                t-att-value="qc_line['value']"
+                                                t-att-data-qc_line_id="qc_line['qc_line_id']"
+                                                t-att-data-workorder="qc_line['workorder_id']"
+                                                t-att-data-template="qc_line['template_id']"
+                                                t-att-data-equipment="qc_line['equipment_id']"
+                                                t-att-data-product="qc_line['product_id']"
+                                                t-att-data-location="qc_line['location_id']"
+                                                t-att-data-qc_type="qc_line['qc_type']"
+                                                t-att-data-qc_line_type="qc_line['qc_line_type']"
+                                                t-att-data-template_type="qc_line['template_type']"
+                                                t-att-data-is_change="line.get('is_change',False)"
+                                                t-att-data-is_create="qc_line['is_create']"
+                                                class="text text-left change_value click_input clickcomplete"/>
+                                            <t t-if="line.get('is_change',False)"><span>&#10004;</span></t>
+                                        </t>
+                                        <t t-if="qc_line['template_type'] == 'time'">
+                                            <input type="time" id="input_time_lock"
+                                                t-attf-id="{{line['time']}}|{{line['sequence']}}|{{qc_line['qc_line_id']}}"
+                                                t-att-data-time="line['time']"
+                                                t-att-data-sequence="line['sequence']"
+                                                t-att-value="qc_line['value']"
+                                                t-att-data-qc_line_id="qc_line['qc_line_id']"
+                                                t-att-data-workorder="qc_line['workorder_id']"
+                                                t-att-data-template="qc_line['template_id']"
+                                                t-att-data-equipment="qc_line['equipment_id']"
+                                                t-att-data-product="qc_line['product_id']"
+                                                t-att-data-location="qc_line['location_id']"
+                                                t-att-data-qc_type="qc_line['qc_type']"
+                                                t-att-data-qc_line_type="qc_line['qc_line_type']"
+                                                t-att-data-template_type="qc_line['template_type']"
+                                                t-att-data-is_change="line.get('is_change',False)"
+                                                t-att-data-is_create="qc_line['is_create']"
+                                                class="time text-center change_value click_input"/>
+                                            <t t-if="line.get('is_change',False)"><span>&#10004;</span></t>
+                                        </t>
+                                        <t t-if="qc_line['template_type'] == 'checkbox'">
+                                            <center>
+                                                <t t-if="qc_line.get('value') == 'Pass'">
+                                                    <input type="checkbox" id="input_checkbox_pass_lock"
+                                                        t-attf-checked="checked"
+                                                        t-attf-id="{{line['time']}}|{{line['sequence']}}|{{qc_line['qc_line_id']}}"
+                                                        t-att-data-time="line['time']"
+                                                        t-att-data-sequence="line['sequence']"
+                                                        t-att-value="qc_line['value']"
+                                                        t-att-data-qc_line_id="qc_line['qc_line_id']"
+                                                        t-att-data-workorder="qc_line['workorder_id']"
+                                                        t-att-data-template="qc_line['template_id']"
+                                                        t-att-data-equipment="qc_line['equipment_id']"
+                                                        t-att-data-product="qc_line['product_id']"
+                                                        t-att-data-location="qc_line['location_id']"
+                                                        t-att-data-qc_type="qc_line['qc_type']"
+                                                        t-att-data-qc_line_type="qc_line['qc_line_type']"
+                                                        t-att-data-template_type="qc_line['template_type']"
+                                                        t-att-data-is_change="line.get('is_change',False)"
+                                                        t-att-data-is_create="qc_line['is_create']"
+                                                        class="checkbox text-center change_value click_input"
+                                                        value="Pass"/>
+                                                    <t t-if="line.get('is_change',False)"><span>&#10004;</span></t>
+                                                </t>
+                                                <t t-else="">
+                                                    <input type="checkbox" id="input_checkbox_failed_lock"
+                                                        t-attf-id="{{line['time']}}|{{line['sequence']}}|{{qc_line['qc_line_id']}}"
+                                                        t-att-data-time="line['time']"
+                                                        t-att-data-sequence="line['sequence']"
+                                                        t-att-value="qc_line['value']"
+                                                        t-att-data-qc_line_id="qc_line['qc_line_id']"
+                                                        t-att-data-workorder="qc_line['workorder_id']"
+                                                        t-att-data-template="qc_line['template_id']"
+                                                        t-att-data-equipment="qc_line['equipment_id']"
+                                                        t-att-data-product="qc_line['product_id']"
+                                                        t-att-data-location="qc_line['location_id']"
+                                                        t-att-data-qc_type="qc_line['qc_type']"
+                                                        t-att-data-qc_line_type="qc_line['qc_line_type']"
+                                                        t-att-data-template_type="qc_line['template_type']"
+                                                        t-att-data-is_change="line.get('is_change',False)"
+                                                        t-att-data-is_create="qc_line['is_create']"
+                                                        class="checkbox text-center change_value click_input"
+                                                        value="Failed"/>
+                                                    <t t-if="line.get('is_change',False)"><span>&#10004;</span></t>
+                                                </t>
+                                            </center>
+                                        </t>
+                                        <t t-if="qc_line['template_type'] == 'passfail'">
+                                            <center>
+                                                <t t-if="qc_line.get('value') == 'Pass'">
+                                                    <input type="checkbox" id="input_passfail_pass_lock"
+                                                        t-attf-checked="checked"
+                                                        t-attf-id="{{line['time']}}|{{line['sequence']}}|{{qc_line['qc_line_id']}}"
+                                                        t-att-data-time="line['time']"
+                                                        t-att-data-sequence="line['sequence']"
+                                                        t-att-value="qc_line['value']"
+                                                        t-att-data-qc_line_id="qc_line['qc_line_id']"
+                                                        t-att-data-workorder="qc_line['workorder_id']"
+                                                        t-att-data-template="qc_line['template_id']"
+                                                        t-att-data-equipment="qc_line['equipment_id']"
+                                                        t-att-data-product="qc_line['product_id']"
+                                                        t-att-data-location="qc_line['location_id']"
+                                                        t-att-data-qc_type="qc_line['qc_type']"
+                                                        t-att-data-qc_line_type="qc_line['qc_line_type']"
+                                                        t-att-data-template_type="qc_line['template_type']"
+                                                        t-att-data-is_change="line.get('is_change',False)"
+                                                        t-att-data-is_create="qc_line['is_create']"
+                                                        class="checkbox text-center change_value click_input"
+                                                        value="Pass"/>
+                                                    <t t-if="line.get('is_change',False)"><span>&#10004;</span></t>
+                                                </t>
+                                                <t t-else="">
+                                                    <input type="checkbox" id="input_passfail_failed_lock"
+                                                        t-attf-id="{{line['time']}}|{{line['sequence']}}|{{qc_line['qc_line_id']}}"
+                                                        t-att-data-time="line['time']"
+                                                        t-att-data-sequence="line['sequence']"
+                                                        t-att-value="qc_line['value']"
+                                                        t-att-data-qc_line_id="qc_line['qc_line_id']"
+                                                        t-att-data-workorder="qc_line['workorder_id']"
+                                                        t-att-data-template="qc_line['template_id']"
+                                                        t-att-data-equipment="qc_line['equipment_id']"
+                                                        t-att-data-product="qc_line['product_id']"
+                                                        t-att-data-location="qc_line['location_id']"
+                                                        t-att-data-qc_type="qc_line['qc_type']"
+                                                        t-att-data-qc_line_type="qc_line['qc_line_type']"
+                                                        t-att-data-template_type="qc_line['template_type']"
+                                                        t-att-data-is_change="line.get('is_change',False)"
+                                                        t-att-data-is_create="qc_line['is_create']"
+                                                        class="checkbox text-center change_value click_input"
+                                                        value="Failed"/>
+                                                    <t t-if="line.get('is_change',False)"><span>&#10004;</span></t>
+                                                </t>
+                                            </center>
+                                        </t>
+                                        <t t-if="qc_line['template_type'] == 'cal'">
+                                            <input type="text" id="input_cal_lock"
+                                                t-attf-id="{{line['time']}}|{{line['sequence']}}|{{qc_line['qc_line_id']}}"
+                                                t-att-data-time="line['time']"
+                                                t-attf-data-cal="{{qc_line['template_type']}}|{{line['time']}}|{{qc_line['qc_line_id']}}|{{qc_line['equipment_id']}}|{{line['sequence']}}"
+                                                t-attf-value="{{qc_line['value']}}"
+                                                t-att-data-qc_line_id="qc_line['qc_line_id']"
+                                                t-att-data-workorder="qc_line['workorder_id']"
+                                                t-att-data-template="qc_line['template_id']"
+                                                t-att-data-equipment="qc_line['equipment_id']"
+                                                t-att-data-product="qc_line['product_id']"
+                                                t-att-data-location="qc_line['location_id']"
+                                                t-att-data-qc_type="qc_line['qc_type']"
+                                                t-att-data-qc_line_type="qc_line['qc_line_type']"
+                                                t-att-data-template_type="qc_line['template_type']"
+                                                t-att-data-sequence="sequence"
+                                                t-att-data-is_create="qc_line['is_create']"
+                                                class="number text-center eq-input-readonly" readonly="1"/>
+                                        </t>
+                                        <t t-if="qc_line['template_type'] == 'cal_prod'">
+                                            <input type="text" id="input_cal_prod_lock"
+                                                t-attf-id="{{line['time']}}|{{line['sequence']}}|{{qc_line['qc_line_id']}}"
+                                                t-att-data-time="line['time']"
+                                                t-attf-data-cal="{{qc_line['template_type']}}|{{line['time']}}|{{qc_line['qc_line_id']}}|{{qc_line['equipment_id']}}|{{line['sequence']}}"
+                                                t-attf-value="{{qc_line['value']}}"
+                                                t-att-data-qc_line_id="qc_line['qc_line_id']"
+                                                t-att-data-workorder="qc_line['workorder_id']"
+                                                t-att-data-template="qc_line['template_id']"
+                                                t-att-data-equipment="qc_line['equipment_id']"
+                                                t-att-data-product="qc_line['product_id']"
+                                                t-att-data-location="qc_line['location_id']"
+                                                t-att-data-qc_type="qc_line['qc_type']"
+                                                t-att-data-qc_line_type="qc_line['qc_line_type']"
+                                                t-att-data-template_type="qc_line['template_type']"
+                                                t-att-data-sequence="sequence"
+                                                t-att-data-is_create="qc_line['is_create']"
+                                                class="number text-center eq-input-readonly" readonly="1"/>
+                                        </t>
+                                        <t t-if="qc_line['template_type'] == 'cal_prods'">
+                                            <input type="text" id="input_cal_prods_lock"
+                                                t-attf-id="{{line['time']}}|{{line['sequence']}}|{{qc_line['qc_line_id']}}"
+                                                t-att-data-time="line['time']"
+                                                t-attf-data-cal="{{qc_line['template_type']}}|{{line['time']}}|{{qc_line['qc_line_id']}}|{{qc_line['equipment_id']}}|{{line['sequence']}}"
+                                                t-attf-value="{{qc_line['value']}}"
+                                                t-att-data-qc_line_id="qc_line['qc_line_id']"
+                                                t-att-data-workorder="qc_line['workorder_id']"
+                                                t-att-data-template="qc_line['template_id']"
+                                                t-att-data-equipment="qc_line['equipment_id']"
+                                                t-att-data-product="qc_line['product_id']"
+                                                t-att-data-location="qc_line['location_id']"
+                                                t-att-data-qc_type="qc_line['qc_type']"
+                                                t-att-data-qc_line_type="qc_line['qc_line_type']"
+                                                t-att-data-template_type="qc_line['template_type']"
+                                                t-att-data-sequence="sequence"
+                                                t-att-data-is_create="qc_line['is_create']"
+                                                class="number text-center eq-input-readonly" readonly="1"/>
+                                        </t>
+                                        <t t-if="qc_line['template_type'] == 'related_number'">
+                                            <input type="number" id="input_related_number_lock"
+                                                t-attf-id="{{line['time']}}|{{line['sequence']}}|{{qc_line['qc_line_id']}}"
+                                                t-att-data-time="line['time']"
+                                                t-attf-value="{{qc_line['value']}}"
+                                                t-att-data-qc_line_id="qc_line['qc_line_id']"
+                                                t-att-data-workorder="qc_line['workorder_id']"
+                                                t-att-data-template="qc_line['template_id']"
+                                                t-att-data-equipment="qc_line['equipment_id']"
+                                                t-att-data-product="qc_line['product_id']"
+                                                t-att-data-location="qc_line['location_id']"
+                                                t-att-data-qc_type="qc_line['qc_type']"
+                                                t-att-data-qc_line_type="qc_line['qc_line_type']"
+                                                t-att-data-template_type="qc_line['template_type']"
+                                                t-att-data-sequence="sequence"
+                                                t-att-data-is_create="qc_line['is_create']"
+                                                class="number text-center eq-input-readonly" readonly="1"/>
+                                        </t>
+                                        <t t-if="qc_line['template_type'] == 'related_text'">
+                                            <input type="text" id="input_related_text_lock"
+                                                t-attf-id="{{line['time']}}|{{line['sequence']}}|{{qc_line['qc_line_id']}}"
+                                                t-att-data-time="line['time']"
+                                                t-attf-value="{{qc_line['value']}}"
+                                                t-att-data-qc_line_id="qc_line['qc_line_id']"
+                                                t-att-data-workorder="qc_line['workorder_id']"
+                                                t-att-data-template="qc_line['template_id']"
+                                                t-att-data-equipment="qc_line['equipment_id']"
+                                                t-att-data-product="qc_line['product_id']"
+                                                t-att-data-location="qc_line['location_id']"
+                                                t-att-data-qc_type="qc_line['qc_type']"
+                                                t-att-data-qc_line_type="qc_line['qc_line_type']"
+                                                t-att-data-template_type="qc_line['template_type']"
+                                                t-att-data-sequence="sequence"
+                                                t-att-data-is_create="qc_line['is_create']"
+                                                class="text text-left eq-input-readonly" readonly="1"/>
+                                        </t>
+                                        <t t-if="qc_line['template_type'] == 'related_time'">
+                                            <input type="time" id="input_related_time_lock"
+                                                t-attf-id="{{line['time']}}|{{line['sequence']}}|{{qc_line['qc_line_id']}}"
+                                                t-att-data-time="line['time']"
+                                                t-att-data-sequence="line['sequence']"
+                                                t-att-value="qc_line['value']"
+                                                t-att-data-qc_line_id="qc_line['qc_line_id']"
+                                                t-att-data-workorder="qc_line['workorder_id']"
+                                                t-att-data-template="qc_line['template_id']"
+                                                t-att-data-equipment="qc_line['equipment_id']"
+                                                t-att-data-product="qc_line['product_id']"
+                                                t-att-data-location="qc_line['location_id']"
+                                                t-att-data-qc_type="qc_line['qc_type']"
+                                                t-att-data-qc_line_type="qc_line['qc_line_type']"
+                                                t-att-data-template_type="qc_line['template_type']"
+                                                t-att-data-is_change="line.get('is_change',False)"
+                                                t-att-data-is_create="qc_line['is_create']"
+                                                class="time text-center eq-input-readonly" readonly="1"/>
+                                            <t t-if="line.get('is_change',False)"><span>&#10004;</span></t>
+                                        </t>
+                                        <t t-if="qc_line['template_type'] == 'related_cal_time'">
+                                            <input type="number" id="input_related_cal_time_lock"
+                                                t-attf-id="{{line['time']}}|{{line['sequence']}}|{{qc_line['qc_line_id']}}"
+                                                t-att-data-time="line['time']"
+                                                t-att-data-sequence="line['sequence']"
+                                                t-att-value="qc_line['value']"
+                                                t-att-data-qc_line_id="qc_line['qc_line_id']"
+                                                t-att-data-workorder="qc_line['workorder_id']"
+                                                t-att-data-template="qc_line['template_id']"
+                                                t-att-data-equipment="qc_line['equipment_id']"
+                                                t-att-data-product="qc_line['product_id']"
+                                                t-att-data-location="qc_line['location_id']"
+                                                t-att-data-qc_type="qc_line['qc_type']"
+                                                t-att-data-qc_line_type="qc_line['qc_line_type']"
+                                                t-att-data-template_type="qc_line['template_type']"
+                                                t-att-data-is_change="line.get('is_change',False)"
+                                                t-att-data-is_create="qc_line['is_create']"
+                                                class="number text-center eq-input-readonly" readonly="1"/>
+                                            <t t-if="line.get('is_change',False)"><span>&#10004;</span></t>
+                                        </t>
+                                        <t t-if="qc_line['template_type'] == 'cal_time'">
+                                            <input type="number" id="input_cal_time_lock"
+                                                t-attf-id="{{line['time']}}|{{line['sequence']}}|{{qc_line['qc_line_id']}}"
+                                                t-att-data-time="line['time']"
+                                                t-attf-data-cal="{{qc_line['template_type']}}|{{line['time']}}|{{qc_line['qc_line_id']}}|{{qc_line['equipment_id']}}|{{line['sequence']}}"
+                                                t-att-data-sequence="line['sequence']"
+                                                t-att-value="qc_line['value']"
+                                                t-att-data-qc_line_id="qc_line['qc_line_id']"
+                                                t-att-data-workorder="qc_line['workorder_id']"
+                                                t-att-data-template="qc_line['template_id']"
+                                                t-att-data-equipment="qc_line['equipment_id']"
+                                                t-att-data-product="qc_line['product_id']"
+                                                t-att-data-location="qc_line['location_id']"
+                                                t-att-data-qc_type="qc_line['qc_type']"
+                                                t-att-data-qc_line_type="qc_line['qc_line_type']"
+                                                t-att-data-template_type="qc_line['template_type']"
+                                                t-att-data-is_change="line.get('is_change',False)"
+                                                t-att-data-is_create="qc_line['is_create']"
+                                                class="number text-center eq-input-readonly" readonly="1"/>
+                                        </t>
+                                        <t t-if="qc_line['template_type'] == 'location'">
+                                            <input type="text" id="input_location_lock" list="location_list" autocomplete="off"
+                                                t-attf-id="{{line['time']}}|{{line['sequence']}}|{{qc_line['qc_line_id']}}"
+                                                t-att-data-time="line['time']"
+                                                t-att-data-sequence="line['sequence']"
+                                                t-att-value="qc_line['value']"
+                                                t-att-data-qc_line_id="qc_line['qc_line_id']"
+                                                t-att-data-workorder="qc_line['workorder_id']"
+                                                t-att-data-template="qc_line['template_id']"
+                                                t-att-data-equipment="qc_line['equipment_id']"
+                                                t-att-data-product="qc_line['product_id']"
+                                                t-att-data-location="qc_line['location_id']"
+                                                t-att-data-qc_type="qc_line['qc_type']"
+                                                t-att-data-qc_line_type="qc_line['qc_line_type']"
+                                                t-att-data-template_type="qc_line['template_type']"
+                                                t-att-data-is_change="line.get('is_change',False)"
+                                                t-att-data-is_create="qc_line['is_create']"
+                                                class="text text-left change_value click_input clickcomplete"/>
+                                            <t t-if="line.get('is_change',False)"><span>&#10004;</span></t>
+                                        </t>
+                                        <t t-if="qc_line['template_type'] in ['Summary','Average','Total Summary','Total Average']">
+                                            <input type="number" id="input_sum_avg_lock"
+                                                t-attf-id="{{line['time']}}|{{line['sequence']}}|{{qc_line['qc_line_id']}}"
+                                                t-att-data-time="line['time']"
+                                                t-attf-data-cal="{{qc_line['template_type']}}|{{line['time']}}|{{qc_line['qc_line_id']}}|{{qc_line['equipment_id']}}|{{line['sequence']}}"
+                                                t-att-data-sequence="line['sequence']"
+                                                t-att-value="qc_line['value']"
+                                                t-att-data-qc_line_id="qc_line['qc_line_id']"
+                                                t-att-data-workorder="qc_line['workorder_id']"
+                                                t-att-data-template="qc_line['template_id']"
+                                                t-att-data-equipment="qc_line['equipment_id']"
+                                                t-att-data-product="qc_line['product_id']"
+                                                t-att-data-location="qc_line['location_id']"
+                                                t-att-data-qc_type="qc_line['qc_type']"
+                                                t-att-data-qc_line_type="qc_line['qc_line_type']"
+                                                t-att-data-template_type="qc_line['template_type']"
+                                                t-att-data-is_change="line.get('is_change',false)"
+                                                t-att-data-is_create="qc_line['is_create']"
+                                                class="number text-center eq-input-readonly" readonly="1"/>
+                                        </t>
+                                        <div>
+                                            <t t-if="qc_line['template_type'] == 'create' and display_name in ['Input Data','Output Data'] and qc_line['is_create'] == '' and qc_line['show_button'] == 'show'">
+                                                <button class="button btn btn-lg btn-success btn_validate"
+                                                t-att-data-time="line['time']"
+                                                t-att-data-sequence="line['sequence']"
+                                                t-att-data-workorder="qc_line['workorder_id']"
+                                                t-att-data-template="qc_line['template_id']"
+                                                t-att-data-equipment="qc_line['equipment_id']"
+                                                t-att-data-qc_type="qc_line['qc_type']"
+                                                t-att-data-template_type="qc_line['template_type']"
+                                                t-attf-data-tmpl_type="{{qc_type}}"
+                                                type="button">Create Move</button>
+                                            </t>
+                                        </div>
+                                        <div>
+                                            <t t-if="qc_line['template_type'] == 'adjust' and display_name in ['Input Data','Output Data'] and qc_line['is_create'] == 'readonly' and qc_line['show_button'] == 'show'">
+                                                <button class="button btn btn-lg btn-danger btn_adjust"
+                                                t-att-data-time="line['time']"
+                                                t-att-data-sequence="line['sequence']"
+                                                t-att-data-workorder="qc_line['workorder_id']"
+                                                t-att-data-template="qc_line['template_id']"
+                                                t-att-data-equipment="qc_line['equipment_id']"
+                                                t-att-data-qc_type="qc_line['qc_type']"
+                                                t-att-data-template_type="qc_line['template_type']"
+                                                t-attf-data-tmpl_type="{{qc_type}}"
+                                                type="button">Adjust Move</button>
+                                            </t>
+                                        </div>
+                                    </td>
+                                </t>
+                            </tr>
+                            <t t-set="sequence" t-value="sequence+1"/>
+                        </t>
+                    </table>
+                    <t t-if="current_template_id" t-foreach="[o for o in current_template_id.lines if o.is_active]" t-as="tmp">
+                        <t t-if="tmp.template_type == 'footer_text'">
+                            <div class="row">
+                                <p style="text-align:right" class="col-sm-4">
+                                    <t t-att-data-id="tmp.id" t-esc="tmp.name"/>
+                                </p>
+                                <div class="col-sm-2">
+                                    <t t-foreach="lines_footer" t-as="line">
+                                        <t t-if="line['template_type'] == 'footer_text' and tmp.id == line['qc_line_id']">
+                                            <input type="text"
+                                                t-attf-id="input-{{tmp.id}}"
+                                                t-att-data-time="line['time']"
+                                                t-att-value="line['value']"
+                                                t-att-data-qc_line_id="line['qc_line_id']"
+                                                t-att-data-workorder="line['workorder_id']"
+                                                t-att-data-template="line['template_id']"
+                                                t-att-data-equipment="line['equipment_id']"
+                                                t-att-data-product="line['product_id']"
+                                                t-att-data-location="line['location_id']"
+                                                t-att-data-qc_type="line['qc_type']"
+                                                t-att-data-qc_line_type="line['qc_line_type']"
+                                                t-att-data-template_type="line['template_type']"
+                                                t-att-data-sequence="sequence"
+                                                class="text-left change_value click_input"/>
+                                        </t>
+                                    </t>
+                                </div>
+                            </div>
+                        </t>
+                    </t>
+                    <!--<div class="row mt32 mb32">-->
+                    <!--<div class="col-xs-12 col-md-12 col-sm-12">-->
+                    <!--<div class="col-xs-4 col-md-4 col-sm-4" align="center">-->
+                    <!--<t t-if="display_name in ['Input Data','Output Data']">-->
+                    <!--<t>-->
+                    <!--<input type="text"-->
+                    <!--t-attf-data-workorder="{{workorder_id.id}}"-->
+                    <!--t-attf-data-template="{{current_template_id.id}}"-->
+                    <!--t-attf-data-tmpl_type="{{qc_type}}"-->
+                    <!--t-attf-data-idx="{{status_id.id}}"-->
+                    <!--class="text-left change_gen_time click_input"/>-->
+                    <!--</t>-->
+                    <!--<t>-->
+                    <!--<button id="createstock" class="btn btn-lg btn-success btn_validate"-->
+                    <!--t-attf-data-workorder="{{workorder_id.id}}"-->
+                    <!--t-attf-data-template="{{current_template_id.id}}"-->
+                    <!--t-attf-data-tmpl_type="{{qc_type}}"-->
+                    <!--t-attf-data-idx="{{status_id.id}}"-->
+                    <!--t-attf-data-state="{{status_id.state}}"-->
+                    <!--type="button">Create Move</button>-->
+                    <!--</t>-->
+                    <!--</t>-->
+                    <!--</div>-->
+                    <!--<div class="col-xs-4 col-md-4 col-sm-4" align="center">-->
+                    <!--<t t-if="display_name in ['Input Data','Output Data']">-->
+                    <!--<t>-->
+                    <!--<input type="text"-->
+                    <!--t-attf-data-workorder="{{workorder_id.id}}"-->
+                    <!--t-attf-data-template="{{current_template_id.id}}"-->
+                    <!--t-attf-data-tmpl_type="{{qc_type}}"-->
+                    <!--t-attf-data-idx="{{status_id.id}}"-->
+                    <!--class="text-left change_adjust_time click_input"/>-->
+                    <!--</t>-->
+                    <!--<t>-->
+                    <!--<button class="btn btn-lg btn-danger btn_adjust"-->
+                    <!--t-attf-data-workorder="{{workorder_id.id}}"-->
+                    <!--t-attf-data-template="{{current_template_id.id}}"-->
+                    <!--t-attf-data-tmpl_type="{{qc_type}}"-->
+                    <!--t-attf-data-idx="{{status_id.id}}"-->
+                    <!--t-attf-data-state="{{status_id.state}}"-->
+                    <!--type="button">Adjust Move</button>-->
+                    <!--</t>-->
+                    <!--</t>-->
+                    <!--</div>-->
+                    <!--</div>-->
+                    <!--</div>-->
+                    <div class="row mt32 mb32">
+                        <div class="col-xs-12 col-md-12 col-sm-12">
+                            <div class="col-xs-4 col-md-4 col-sm-4" align="center">
+                                <t t-if="status_id.user1_id">
+                                    <span style="color:#B5B4B4; font-size:15px;">Approved</span>
+                                    <div>
+                                        <span t-esc="status_id.user1_id.display_name"/>
+                                        <span t-esc="status_id.datetime1"/>
+                                    </div>
+                                </t>
+                                <t t-if="not status_id.user1_id and status_id.state != 'draft'">
+                                    <span style="color:#B5B4B4; font-size:15px;">Waiting for Approve</span>
+                                </t>
+                                <t t-if="status_id.state == 'draft'">
+                                    <div t-if="status_id.state == 'draft'">
+                                        <button class="btn btn-lg btn-info btn_approve"
+                                            t-attf-data-workorder="{{workorder_id.id}}"
+                                            t-attf-data-template="{{current_template_id.id}}"
+                                            t-attf-data-equipment="{{equipment_ids}}"
+                                            t-attf-data-idx="{{status_id.id}}"
+                                            t-attf-data-state="{{status_id.state}}"
+                                            type="button">Approve 1</button>
+                                        <!--#CLOSE 1 TEMPLATE INCLUDE ALL EQUIPMENT THEN CHANGE TO EQUIPMENT IDS INSTEAD-->
+                                        <!--t-attf-data-equipment="{{current_equipment_id.id}}"-->
+                                    </div>
+                                </t>
+                            </div>
+                            <div class="col-xs-4 col-md-4 col-sm-4" align="center">
+                                <t t-if="status_id.user2_id">
+                                    <span style="color:#B5B4B4; font-size:15px;">Approved</span>
+                                    <div>
+                                        <span t-esc="status_id.user2_id.display_name"/>
+                                        <span t-esc="status_id.datetime2"/>
+                                    </div>
+                                </t>
+                                <t t-if="not status_id.user2_id and status_id.state != 'confirm'">
+                                    <span style="color:#B5B4B4; font-size:15px;">Waiting for Approve</span>
+                                </t>
+                                <t t-if="status_id.state == 'confirm'">
+                                    <div t-if="status_id.state == 'confirm'">
+                                        <button class="btn btn-lg btn-info btn_approve"
+                                            t-attf-data-workorder="{{workorder_id.id}}"
+                                            t-attf-data-template="{{current_template_id.id}}"
+                                            t-attf-data-equipment="{{equipment_ids}}"
+                                            t-attf-data-tmpl_type="{{qc_type}}"
+                                            t-attf-data-idx="{{status_id.id}}"
+                                            t-attf-data-state="{{status_id.state}}"
+                                            type="button">Approve 2</button>
+                                        <!--#CLOSE 1 TEMPLATE INCLUDE ALL EQUIPMENT THEN CHANGE TO EQUIPMENT IDS INSTEAD-->
+                                        <!--t-attf-data-equipment="{{current_equipment_id.id}}"-->
+                                    </div>
+                                </t>
+                            </div>
+                            <div class="col-xs-4 col-md-4 col-sm-4" align="center">
+                                <t t-if="status_id.user3_id">
+                                    <strong class="color:#B5B4B4; font-size:15px;">Validated</strong>
+                                    <div>
+                                        <span t-esc="status_id.user3_id.display_name"/>
+                                        <span t-esc="status_id.datetime3"/>
+                                    </div>
+                                </t>
+                                <t t-if="not status_id.user3_id and status_id.state != 'approve'">
+                                    <span style="color:#B5B4B4; font-size:15px;">Waiting for Validate</span>
+                                </t>
+                                <t t-if="status_id.state == 'approve'">
+                                    <div t-if="status_id.state == 'approve'">
+                                        <!--<button class="btn btn-lg btn-success btn_approve"-->
+                                        <button class="btn btn-lg btn-success btn_approve"
+                                            t-attf-data-workorder="{{workorder_id.id}}"
+                                            t-attf-data-template="{{current_template_id.id}}"
+                                            t-attf-data-equipment="{{equipment_ids}}"
+                                            t-attf-data-tmpl_type="{{qc_type}}"
+                                            t-attf-data-idx="{{status_id.id}}"
+                                            t-attf-data-state="{{status_id.state}}"
+                                            type="button">VALIDATE</button>
+                                        <!--#CLOSE 1 TEMPLATE INCLUDE ALL EQUIPMENT THEN CHANGE TO EQUIPMENT IDS INSTEAD-->
+                                        <!--t-attf-data-equipment="{{current_equipment_id.id}}"-->
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--<script t-if="status_id.state == 'done'">-->
+<!--$(document).ready(function(){-->
+                <!--$("input").removeClass( "change_value" ).addClass('read');-->
+                <!--$("button").removeClass( "btn_adjust btn_validate" );-->
+                <!--$("input").attr('readonly', 'readonly');-->
+            <!--});-->
+        <!--</script>-->
+        <script>
+            $(document).ready(function(){
+                $("[data-is_create='readonly']").removeClass( "change_value" ).addClass('read');
+                $("[data-is_create='readonly']").attr('readonly', 'readonly');
+                debugger
+            });
+        </script>
+    </template>
+</odoo>

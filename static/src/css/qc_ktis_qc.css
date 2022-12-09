@@ -1,0 +1,82 @@
+.eq-input-focus:focus {
+  background-color: #c2e7e6;
+}
+.input-qc-item {
+  background-color: #fffdbb;
+  width: 150px;
+}
+.input-qc-item:focus {
+  background-color: #c2e7e6;
+}
+
+.eq-input, .rem-input{
+  background-color: #fffdbb;
+}
+
+.eq-input-readonly{
+  background-color: lightgray;
+}
+
+.readonly{
+  background-color: lightgray;
+}
+
+.select-title {
+  color: #6d6d6d;
+}
+
+.element-focus:focus {
+  background-color: #c2e7e6;
+}
+.change_value{
+  background-color: #fffdbb;
+  margin: 4px 2px;
+}
+
+input:disabled {
+    background: #dddddd;
+}
+
+.change_gen_time{
+  background-color: #fffdbb;
+}
+
+.change_adjust_time{
+  background-color: #fffdbb;
+}
+
+.button {
+  padding: 6px 12px;
+  text-align: center;
+  font-size: 12px;
+  margin: 4px 2px;
+  cursor: pointer;
+}
+
+div.equip{
+  width: 200px;
+}
+
+.number{
+  width: 75px;
+  margin: 4px 2px;
+}
+
+.time{
+  width: 95px;
+  margin: 4px 2px;
+}
+
+.checkbox{
+  width: 50px;
+  margin: 4px 2px;
+}
+
+.text{
+  width: 125px;
+  margin: 4px 2px;
+}
+
+.read{
+  background-color: lightgray;
+}

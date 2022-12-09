@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<templates id='qc_template_qweb'>
+
+    <t t-name="QCTemplateView">
+		<!--
+        <div class="o_form_view">
+            <div class="page o_form_sheet_bg">
+                <div class="o_form_sheet">
+                    <div class="content">
+                	</div>
+                </div>
+            </div>
+        </div>
+		-->
+		<div>
+		</div>
+	</t>
+    <t t-name="qc-table-data">
+		<style>
+			.header-fixed {
+				position: fixed;
+				top: 125px; display:none;
+				background-color:white;
+			}
+			.table-qc {
+				overflow-x: auto;
+				display: block;
+				white-space: nowrap;
+			}
+		</style>
+
+		<div class="table-responsive">
+		<!--	<table class="table table-striped table-qc" t-attf-style="{{count_cols &lt;= 12 and 'display:table' or 'display:block'}}"> -->
+				<table class="table table-striped table-qc">
+				<thead>
+					<t t-set="head_count" t-value="0"/>
+					<t t-foreach="headers" t-as="header">
+						<th t-attf-style="{{head_count &lt; 1 and 'color:white' or '' and 'display: block'}}" id ='tesssssssss' class="text-center"><t t-esc="header"/></th>
+						<t t-set="head_count" t-value="head_count+1"/>
+					</t>
+				</thead>
+				<tbody>
+					<t t-foreach="rows" t-as="row">
+						<tr>
+							<td>
+								<t t-esc="row['time']"/>
+							</td>
+							<t t-foreach="row['cols']" t-as="col">
+								<td 
+									t-attf-data-id="{{col['id']}}"
+									t-attf-data-qc-id="{{col['qc_id']}}"
+									t-attf-test-type="{{col['test_type']}}"
+									t-attf-data-qtime="{{col['qtime']}}"
+									t-attf-style="{{col['test_type'] == 'number' 
+										and col['norm'] != 0 and (col['tolerance_min'] and col['values_number'] &lt; 
+										col['tolerance_min'] or col['tolerance_max'] and col['values_number'] &gt; 
+										col['tolerance_max']) and 'color:red;' or ''}}
+										{{col['test_type'] == 'cal' and 'background-color:#DCDCDC;text-align:right;' or ''}}
+										{{col['is_link'] == 1 and 'background-color:#DCDCDC;text-align:right;' or ''}}
+										{{col['test_type'] == 'number' and 'text-align:right;' or ''}}
+										{{col['test_type'] == 'number_norm' and 'text-align:right;' or ''}}"
+										
+									t-attf-class="{{col['test_type'] != 'passfail' and 'td-qc-item' and col['test_type'] != 'checkbox' and 'td-qc-item'}}"
+								>
+									<t t-set="norm_value" t-value=""/>	
+									<t t-if="col['tolerance_max']">
+										<t t-set="norm_value" t-value="norm_value+' ≤'+col['tolerance_max']"/>
+									</t>
+									<t t-if="col['tolerance_min']">
+										<t t-set="norm_value" t-value="norm_value+' ≥'+col['tolerance_min']"/>
+									</t>
+									<t t-if="mode=='edit' and col['test_type'] !='cal' and col['test_type'] !='checkbox' and col['test_type'] !='passfail' and col['is_link'] != 1 and readonly">
+										<input type='text' id='Text Class' class='input-qc-item' 
+										t-attf-test-type="{{col['test_type']}}"
+										t-attf-style="{{col['test_type'] == 'number' and 'text-align:right;' or ''}}{{col['test_type'] == 'cal' and 'text-align:right;' or ''}}{{col['test_type'] == 'number_norm' and 'text-align:right;' or ''}}"
+										t-attf-value="{{col['test_type'] != 'number_norm' and col['qc_value'] or ''}}{{col['test_type'] == 'number_norm' and norm_value or ''}}"/>
+									</t>
+									<t t-elif="mode=='edit' and col['test_type'] !='cal' and col['test_type'] =='checkbox' or col['test_type'] =='passfail' and col['is_link'] != 1 and readonly">
+										<t t-if="col['qc_value'] == 'Pass'">
+											<input type='checkbox' id='checkbox Class' class='input-qc-item' 
+											t-attf-checked="checked"
+											t-attf-test-type="{{col['test_type']}}"
+											t-attf-style="{{col['test_type'] == 'number' and 'text-align:right;' or ''}}{{col['test_type'] == 'cal' and 'text-align:right;' or ''}}{{col['test_type'] == 'number_norm' and 'text-align:right;' or ''}}"
+											t-attf-value="{{col['test_type'] != 'number_norm' and col['qc_value'] or ''}}{{col['test_type'] == 'number_norm' and norm_value or ''}}"
+											value="Failed"/>
+										</t>
+										<t t-else="">
+											<input type='checkbox' id='checkbox Class' class='input-qc-item' 
+											t-attf-test-type="{{col['test_type']}}"
+											t-attf-style="{{col['test_type'] == 'number' and 'text-align:right;' or ''}}{{col['test_type'] == 'cal' and 'text-align:right;' or ''}}{{col['test_type'] == 'number_norm' and 'text-align:right;' or ''}}"
+											t-attf-value="{{col['test_type'] != 'number_norm' and col['qc_value'] or ''}}{{col['test_type'] == 'number_norm' and norm_value or ''}}"
+											value="Pass"/>
+										</t>
+
+									</t>
+									<t t-else="">
+										<t t-if="col['test_type'] == 'number_norm'">
+											<t t-esc="norm_value"/>
+										</t>
+										<t t-else="">
+											<t t-esc="col['qc_value']"/>
+										</t>
+									</t>
+								</td>
+							</t>
+						</tr>
+					</t>
+				</tbody>
+				<tfoot>
+					<t t-foreach="footers" t-as="footer">
+						<th class="text-right"><span t-if="footer['show'] and footer['value'] > '0'"><t t-esc="footer['value']"/></span></th>
+					<!--<th class="text-right"><span t-if="footer['show']"><t t-esc="footer['value']"/></span></th>-->
+					</t>	
+				</tfoot>
+			</table>
+			<table class="table table-striped header-fixed"></table>
+		</div>
+	</t>
+
+</templates>
+
