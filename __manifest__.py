@@ -12,7 +12,8 @@
     ],
     'description': '',
     'data': [
-        'views/gmap.xml',
+        'views/gmap_menu.xml',
+        'views/gmap_view.xml',
     ],
     'application': True,
     "license": "Other proprietary",

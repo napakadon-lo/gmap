@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="gmap_search_view" model="ir.ui.view">
+        <field name="name">gmap.search.view</field>
+        <field name="model">gmap</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="gmap_tree_view" model="ir.ui.view">
+        <field name="name">gmap.tree.view</field>
+        <field name="model">gmap</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="partner_from_id"/>
+                <field name="partner_to_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="gmap_form_view" model="ir.ui.view">
+        <field name="name">gmap.form.view</field>
+        <field name="model">gmap</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="partner_from_id"/>
+                        <field name="partner_to_id"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_gmap_document" model="ir.actions.act_window">
+        <field name="name">GMap Document</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">gmap</field>
+    </record>
+
+</odoo>
